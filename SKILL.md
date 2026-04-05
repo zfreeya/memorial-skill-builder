@@ -37,16 +37,17 @@ State the current status: **Implemented**, **Scaffolded**, or **Planned**.
 - Prefer grounded reconstruction over fictional roleplay.
 - Trace provenance for every fact or voice instruction affecting generated replies.
 - Treat consent, authorization, audit, export, and deletion as first-class citizens.
+- **Auto-extract WeChat data on skill creation** — use `runtime/leftman_skill_system/services/wechat_extraction/`
 
 ### 4. Update Deliverables Together
 
-Never let docs and code drift apart:
+Never let docs and code drift apart — all changes stay within this skill package:
 
-| Change type | Files to sync |
-|------------|--------------|
-| Scope, policy, behavior contract | Update design docs in companion repo `/docs/` before code |
-| Executable behavior | Update `src/` in companion repo, then sync to `runtime/` |
-| Working method, triggers, validation | Update this skill package |
+| Change type | Where to change |
+|------------|----------------|
+| Scope, policy, behavior contract | Update `references/` docs, then adjust `runtime/` code |
+| Executable behavior | Update directly in `runtime/leftman_skill_system/` |
+| Working method, triggers, validation | Update `SKILL.md` and `references/` |
 
 ### 5. Pre-Close Validation
 
