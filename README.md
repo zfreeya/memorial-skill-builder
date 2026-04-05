@@ -46,10 +46,10 @@
 ```bash
 # 安装到当前项目
 mkdir -p .agents/skills
-git clone https://github.com/YOUR_USERNAME/memorial-skill-builder .agents/skills/memorial-skill-builder
+git clone https://github.com/zfreeya/memorial-skill-builder .agents/skills/memorial-skill-builder
 
 # 或安装到全局（所有项目可用）
-git clone https://github.com/YOUR_USERNAME/memorial-skill-builder ~/.agents/skills/memorial-skill-builder
+git clone https://github.com/zfreeya/memorial-skill-builder ~/.agents/skills/memorial-skill-builder
 ```
 
 ### 依赖（可选，用于数据解析）
