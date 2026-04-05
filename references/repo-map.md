@@ -2,13 +2,18 @@
 
 Use this file to decide where to make changes.
 
-## Skill Package
+## Skill Package (this folder)
 
-- `memorial-skill-builder/SKILL.md`: the operational instructions for the skill itself.
-- `memorial-skill-builder/agents/openai.yaml`: UI metadata for the skill list and default prompt.
-- `memorial-skill-builder/references/*.md`: detailed rules that should stay out of the main skill body.
+- `SKILL.md`: operational instructions for the skill.
+- `agents/openai.yaml`: UI metadata for the skill list and default prompt.
+- `references/spec-checklist.md`: alignment checklist against `coding-spec.md`.
+- `references/safety-guardrails.md`: rules for prompts, memory, retrieval, consent, deletion.
+- `references/output-rules.md`: factual grounding, state assumptions, implementation states.
+- `references/hard-boundaries.md`: three non-negotiable boundaries.
+- `references/differentiation.md`: what makes this different from generic roleplay.
+- `repo-map.md`: this file.
 
-## Product And Design Docs
+## Product And Design Docs (project root `/docs/`)
 
 - `docs/PRD.md`: product intent, user stories, scope, acceptance, and milestone framing.
 - `docs/architecture.md`: service split, flows, data movement, risk boundaries, deployment, and observability.
@@ -21,7 +26,7 @@ Use this file to decide where to make changes.
 - `docs/comparison-vs-existing.md`: what is retained, rewritten, added, or removed from the legacy design.
 - `docs/task-breakdown.md`: execution order, deliverables, rollback, and acceptance checklist.
 
-## Current Codebase
+## Current Codebase (project root `/src/`)
 
 - `src/leftman_skill_system/domain`: shared enums and data models.
 - `src/leftman_skill_system/repositories`: repository interfaces and in-memory adapters.
@@ -33,6 +38,6 @@ Use this file to decide where to make changes.
 
 ## Default Change Strategy
 
-- Update docs first when the request changes scope, policy, or behavior contracts.
-- Update code second when the request changes executable behavior.
-- Update this skill package whenever the working method, validation steps, or trigger language should change.
+1. Update `/docs/` first when the request changes scope, policy, or behavior contracts.
+2. Update `src/` second when the request changes executable behavior.
+3. Update this skill package whenever the working method, validation steps, or trigger language should change.

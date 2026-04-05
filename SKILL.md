@@ -5,141 +5,80 @@ description: Use when building or auditing a memorial skill for a deceased perso
 
 # Memorial Skill Builder
 
-> *有些人离开了，但他们说话的方式、思考的习惯、对你专属的温柔——还在。*  
-> *这个 Skill 的任务，是把那些记忆从生物硬盘搬到数字硬盘，同时确保它安全、可审计、可删除。*
+Build production-grade memorial skills grounded in real source material — with consent, audit, and deletion built in from day one.
 
-不是所有"AI 复活"都值得被构建。这个 Skill 做的，是那少数值得被认真对待的——有来源、有授权、有边界、有退出机制。
+## Workflow
 
----
+Execute these steps in order. Do not skip.
 
-## 这个 Skill 能做什么
+### 0. Locate Project Root
 
-**核心能力：把一个真实的人重建为一个可对话的 AI Skill，而不是一个随机角色扮演。**
+Before anything else, identify the project root directory. This skill package lives under `~/.agents/skills/` but the codebase it operates on is a separate project repo. All `/docs/` and `src/` paths in this skill refer to the project root, not the skill package directory.
 
-区别在这里：
+**How to find it:** Look for `docs/PRD.md`, `src/leftman_skill_system/`, `coding-spec.md`, or `pyproject.toml` in the current workspace. If the workspace is not the memorial project repo, ask the user for the correct path.
 
-| 普通做法 | 这个 Skill 的做法 |
-|---------|---------------|
-| 靠 prompt 描述性格，随机生成 | 从真实聊天记录、照片、文章提取，有来源 |
-| 单一 persona 文本驱动输出 | 三层 Prompt × 四层 Memory 架构，行为可追溯 |
-| 没有同意机制 | ConsentRecord + 授权链，家属授权可审计 |
-| "删除"只是删文件 | 彻底删除 + 审计日志 + 撤销授权级联检查 |
-| 幻觉无法检测 | RAG 检索置信度分级 + 事实校验 + 优雅降级 |
-| 无安全机制 | SafetyEvent 日志 + 内容审核 + Prompt 注入防护 |
-| 原型演示级 | 服务拆分 + 接口定义 + 测试计划 + 上线 checklist |
+### 1. Read Current State
 
----
+Read these files before changing anything:
 
-## 工作流程
-
-接到任务后，按以下顺序执行。**不要跳步，不要凭记忆行事。**
-
-### 第一步：读懂现状
-
-在修改任何东西之前，先完整读取：
-
-- `SKILL.md`（本文件）
+- `SKILL.md` (this file)
 - `agents/openai.yaml`
-- `references/repo-map.md`——决定哪些文档和代码路径需要改动
-- `references/spec-checklist.md`——对照 `coding-spec.md` 检查是否达标
-- `references/safety-guardrails.md`——涉及 prompt、memory、consent、删除时必读
+- `references/repo-map.md` — which docs and code paths to change
+- `references/spec-checklist.md` — alignment with `coding-spec.md`
+- `references/safety-guardrails.md` — prompt, memory, consent, deletion rules
 
-然后回答：当前状态是"已实现"、"已脚手架"还是"计划中"？三者不可混淆。
+Then state: is the current status Implemented, Scaffolded, or Planned?
 
-### 第二步：确认 Skill 包结构合规
+### 2. Validate Skill Package Structure
 
-- YAML frontmatter 只保留 `name` 和 `description`。
-- SKILL.md 本体简洁、操作性强，细节规则放 `references/`。
-- 只保留实际用到的目录。
+- YAML frontmatter: `name` + `description` only.
+- Body: concise and procedural. Details go in `references/`.
+- Directories: only keep what is actually used.
 
-### 第三步：映射到 memorial 域的特殊要求
+### 3. Apply Memorial Domain Rules
 
-- 逝者模拟 = 高风险 Skill，比普通聊天机器人需要更严格的边界。
-- 以"有来源的重建"为优先，不做无根据的角色扮演。
-- 任何会影响生成回复的事实或声音指令，都必须有可追溯的来源。
-- 同意、授权、审计、导出、删除是一等公民，不是事后补丁。
+- Deceased-person simulation = high-risk skill. Stricter boundaries than a chatbot.
+- Prefer grounded reconstruction over fictional roleplay.
+- Every fact or voice instruction affecting generated replies must have traceable provenance.
+- Consent, authorization, audit, export, deletion are first-class citizens.
 
-### 第四步：按需联动更新交付物
+Read `references/safety-guardrails.md` and `references/hard-boundaries.md` for the full rule set.
 
-修改了什么，就同步更新对应文件——不允许文档和代码分离：
+### 4. Update Deliverables Together
 
-| 修改类型 | 需要同步更新的文件 |
-|---------|----------------|
-| 范围、策略、行为契约变化 | `/docs/` 下对应文档，优先于代码 |
-| 可执行行为变化 | `src/leftman_skill_system/` 对应模块 |
-| 工作方法、触发语言、验证步骤变化 | 本 Skill 包文件 |
+Never let docs and code drift apart:
 
-**`/docs/` 文档清单**（全部必须保持最新）：
+| Change type | Files to sync |
+|------------|--------------|
+| Scope, policy, behavior contract | `/docs/` corresponding doc — update before code |
+| Executable behavior | `src/leftman_skill_system/` corresponding module |
+| Working method, triggers, validation | This skill package |
 
-- `PRD.md` — 产品意图、用户故事、范围、验收标准、里程碑
-- `architecture.md` — 服务拆分、数据流、风险边界、部署方案
-- `prompt-spec.md` — 三层 Prompt 体系 + 版本管理 + 注入防护
-- `data-model.md` — 实体、字段、生命周期、关系
-- `api-spec.md` — 接口契约 + 治理操作
-- `security-compliance.md` — 同意、保留、删除、访问控制、滥用处理
-- `testing-plan.md` — 单元、集成、回归、红队、验收测试
-- `roadmap.md` — 从脚手架到生产的里程碑计划
-- `comparison-vs-existing.md` — 保留、重构、新增、删除对比
-- `task-breakdown.md` — 执行顺序、交付物、回滚、验收 checklist
+`/docs/` must stay current: `PRD.md`, `architecture.md`, `prompt-spec.md`, `data-model.md`, `api-spec.md`, `security-compliance.md`, `testing-plan.md`, `roadmap.md`, `comparison-vs-existing.md`, `task-breakdown.md`.
 
-### 第五步：关闭前验证
+See `references/repo-map.md` for full path reference.
 
-- 在本 Skill 文件夹运行 skill validator。
-- 如果代码或行为有变化，运行对应的 repo 测试。
-- 明确指出"脚手架状态"和"生产就绪"之间还有哪些差距——不掩盖，不混淆。
+### 5. Pre-Close Validation
 
----
+Before closing any task, verify:
 
-## 输出规则
+- [ ] `SKILL.md` frontmatter has only `name` and `description`
+- [ ] All `references/` files exist and are internally consistent
+- [ ] No empty directories in the skill package
+- [ ] `agents/openai.yaml` `display_name` and `short_description` match SKILL.md
+- [ ] All paths in `references/repo-map.md` resolve to existing files
+- [ ] Output follows rules in `references/output-rules.md`
+- [ ] Hard boundaries in `references/hard-boundaries.md` are not violated
+- [ ] If code changed: run targeted repo tests
+- [ ] State remaining gaps between scaffold and production — do not hide them
 
-这不是"做完就交"的 Skill，每次输出都必须满足：
+## References
 
-**事实接地**  
-每一个关于逝者的可持久事实或声音指令，必须有来源记录（`SourceDocument` + `provenance` 字段）。检索置信度低时，主动降级：模糊表述、缩小断言范围、或拒绝回答。
-
-**结构化优先于 prompt 堆砌**  
-不靠加长 prompt 来弥补架构缺陷。memory 必须分层，检索必须有策略，行为必须可追踪。
-
-**删除和审计是显式的**  
-- 用户要求删除 → 彻底删除内容 + 保留操作元数据 + 撤销授权级联检查
-- 安全拦截 → 写入 `SafetyEvent` 记录，可事后审查
-- 授权变更 → 重新检查下游受影响的所有制品
-
-**假设必须写出来**  
-当来源材料不完整或授权边界不清晰时，先做合理假设，明确列出，继续推进。只在影响安全、合规或核心逻辑时才要求补充。
-
-**区分三种状态**  
-- `已实现`：代码路径、存储边界、验证路径都存在
-- `已脚手架`：结构存在，逻辑待填充
-- `计划中`：文档中规划，代码尚未启动
-
-不允许把"计划中"的能力描述为"已完成"。
-
----
-
-## 三条不可逾越的边界
-
-**🚫 边界一：没有来源的话，不能放进逝者的嘴里。**  
-RAG 检索置信度低 → 降级回答，不硬编造。"我不太确定这件事" 比一句精心的谎言更尊重逝者。
-
-**🚫 边界二：没有授权记录，不能对外发布或广泛分享。**  
-`ConsentRecord` 不是可选项。家属同意 + 授权链 + 审计日志 = 上线前置条件。
-
-**🚫 边界三：用户要求删除，必须真的删。**  
-不是"标记为删除"，不是"移到回收站"。彻底删除内容 + 更新同意状态 + 通知下游 + 生成确认记录。
-
----
-
-## 参考文档索引
-
-| 文件 | 什么时候读 |
-|-----|---------|
-| `references/spec-checklist.md` | 检查 memorial skill 是否满足 `coding-spec.md` 全部要求 |
-| `references/safety-guardrails.md` | 更新 prompt、memory、检索策略、consent、删除、滥用处理时 |
-| `references/repo-map.md` | 决定哪些文档和代码路径需要为当前请求做改动 |
-
----
-
-> *这个 Skill 构建的，不是一个"死而复生"的幻觉——*  
-> *而是一个有根据、有边界、有尊严的记忆系统。*  
-> *你的记忆值得被认真对待。*
+| File | When to read |
+|-----|-------------|
+| `references/spec-checklist.md` | Checking alignment with `coding-spec.md` |
+| `references/safety-guardrails.md` | Updating prompts, memory, retrieval, consent, deletion, abuse handling |
+| `references/repo-map.md` | Deciding which docs and code paths to change |
+| `references/output-rules.md` | Producing any output — factual grounding, state assumptions, implementation states |
+| `references/hard-boundaries.md` | Any decision involving source, consent, or deletion |
+| `references/differentiation.md` | Explaining what makes this skill different from generic roleplay |
