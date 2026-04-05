@@ -1,14 +1,6 @@
 ---
 name: memorial-skill-builder
-description: >
-  Build, audit, and iterate a production-grade memorial skill that reconstructs a deceased person
-  from real source material. Use this skill when you need to: set up or improve a SKILL-compliant
-  memorial package; enforce a three-layer prompt system, four-layer memory architecture, and
-  full consent/deletion/audit pipeline; align all deliverables to the repo coding-spec; evolve
-  an early-stage simulation into an auditable, safe, production-ready system. Triggers include
-  "build a memorial skill", "create a deceased-person skill", "upgrade the memorial system",
-  "add consent flow", "fix memory architecture", "memorial skill audit", "左人 skill", "逝者对话",
-  "已故人物 skill", "纪念 skill".
+description: Use when building or auditing a memorial skill for a deceased person — including setup, consent flow, memory architecture, safety guardrails, deletion pipeline, or production readiness. Triggers include "build a memorial skill", "create a deceased-person skill", "upgrade the memorial system", "add consent flow", "fix memory architecture", "memorial skill audit", "左人 skill", "逝者对话", "已故人物 skill", "纪念 skill".
 ---
 
 # Memorial Skill Builder
