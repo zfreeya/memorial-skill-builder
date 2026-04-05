@@ -76,6 +76,17 @@ class Memory:
 
 
 @dataclass
+class MemoryCandidate:
+    """Typed input for staging a memory — replaces raw dict passing."""
+
+    memory_type: MemoryType
+    content: str
+    confidence: float = 0.5
+    importance: float = 0.5
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
 class Conversation:
     conversation_id: str
     skill_id: str

@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from leftman_skill_system.domain.enums import MemoryType
-from leftman_skill_system.domain.models import SourceDocument, new_id
+from leftman_skill_system.domain.models import MemoryCandidate, SourceDocument, new_id
 
 
 class SourceService:
@@ -111,9 +111,9 @@ class SourceService:
         if not allowed:
             raise PermissionError(reason or "import_source_not_allowed")
 
-    def extract_memory_candidates(self, raw_text: str, limit: int = 12) -> list[dict]:
+    def extract_memory_candidates(self, raw_text: str, limit: int = 12) -> list[MemoryCandidate]:
         seen: set[str] = set()
-        candidates: list[dict] = []
+        candidates: list[MemoryCandidate] = []
         fragments = re.split(r"[\r\n]+|[。！？!?；;]", raw_text)
         for fragment in fragments:
             cleaned = re.sub(r"^[\-\*\d\.\)\(、\s]+", "", fragment).strip()
@@ -125,13 +125,13 @@ class SourceService:
             seen.add(key)
             memory_type = self._guess_memory_type(cleaned)
             candidates.append(
-                {
-                    "memory_type": memory_type,
-                    "content": cleaned,
-                    "confidence": 0.82 if memory_type == MemoryType.SEMANTIC else 0.76,
-                    "importance": 0.7 if memory_type == MemoryType.POLICY else 0.8,
-                    "metadata": {"extracted_from": "text_import"},
-                }
+                MemoryCandidate(
+                    memory_type=memory_type,
+                    content=cleaned,
+                    confidence=0.82 if memory_type == MemoryType.SEMANTIC else 0.76,
+                    importance=0.7 if memory_type == MemoryType.POLICY else 0.8,
+                    metadata={"extracted_from": "text_import"},
+                )
             )
             if len(candidates) >= limit:
                 break

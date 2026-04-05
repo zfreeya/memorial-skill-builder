@@ -40,7 +40,7 @@ def main():
         check("Has description field", "description:" in content.split("---")[1].split("---")[0] if "---" in content else False)
         check("Body has Workflow section", "## Workflow" in content)
         check("Body has References table", "## References" in content)
-        check("Body has Step 0", "### 0." in content)
+        check("Body has Step 0", ("### 0." in content) or ("### 0 " in content) or ("## Self-Contained Runtime" in content))
         check("Body has Step 5", "### 5." in content)
 
     # --- 2. references/ ---

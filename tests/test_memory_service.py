@@ -10,6 +10,7 @@ RUNTIME_DIR = Path(__file__).resolve().parent.parent / "runtime"
 sys.path.insert(0, str(RUNTIME_DIR))
 
 from leftman_skill_system.domain.enums import MemoryType
+from leftman_skill_system.domain.models import MemoryCandidate
 from leftman_skill_system.repositories.in_memory import InMemoryAuditRepository, InMemoryMemoryRepository, InMemorySafetyRepository
 from leftman_skill_system.services.audit_service import AuditService
 from leftman_skill_system.services.memory_service import MemoryService
@@ -25,12 +26,12 @@ class MemoryServiceTest(unittest.TestCase):
         created = self.service.stage_memories(
             skill_id="skill_1",
             candidates=[
-                {
-                    "memory_type": MemoryType.EPISODIC,
-                    "content": "likes rainy walks",
-                    "confidence": 0.8,
-                    "importance": 0.9,
-                }
+                MemoryCandidate(
+                    memory_type=MemoryType.EPISODIC,
+                    content="likes rainy walks",
+                    confidence=0.8,
+                    importance=0.9,
+                )
             ],
         )
         self.assertEqual(len(created), 1)
@@ -44,12 +45,12 @@ class MemoryServiceTest(unittest.TestCase):
         self.service.stage_memories(
             skill_id="skill_1",
             candidates=[
-                {
-                    "memory_type": MemoryType.SEMANTIC,
-                    "content": "favorite color is blue",
-                    "confidence": 0.7,
-                    "importance": 0.7,
-                }
+                MemoryCandidate(
+                    memory_type=MemoryType.SEMANTIC,
+                    content="favorite color is blue",
+                    confidence=0.7,
+                    importance=0.7,
+                )
             ],
         )
         recalled = self.service.recall(skill_id="skill_1", query="blue")

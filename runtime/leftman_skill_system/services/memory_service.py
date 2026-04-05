@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from leftman_skill_system.domain.enums import MemoryStatus
-from leftman_skill_system.domain.models import Memory, default_memory_expiry, new_id, utc_now
+from leftman_skill_system.domain.models import Memory, MemoryCandidate, default_memory_expiry, new_id, utc_now
 
 
 class MemoryService:
@@ -15,23 +15,31 @@ class MemoryService:
         self,
         *,
         skill_id: str,
-        candidates: list[dict],
+        candidates: list[MemoryCandidate],
         source_document_id: str | None = None,
         retention_days: int = 365,
         submitted_by: str | None = None,
     ) -> list[Memory]:
         created: list[Memory] = []
         for candidate in candidates:
+            # Validate candidate fields
+            if not isinstance(candidate, MemoryCandidate):
+                raise TypeError(
+                    f"Expected MemoryCandidate, got {type(candidate).__name__}. "
+                    "Use MemoryCandidate(memory_type=..., content=...) instead of raw dict."
+                )
+            if not candidate.content or not candidate.content.strip():
+                continue
             memory = Memory(
                 memory_id=new_id("mem"),
                 skill_id=skill_id,
-                memory_type=candidate["memory_type"],
-                content=candidate["content"].strip(),
-                confidence=float(candidate.get("confidence", 0.5)),
-                importance=float(candidate.get("importance", 0.5)),
+                memory_type=candidate.memory_type,
+                content=candidate.content.strip(),
+                confidence=float(candidate.confidence),
+                importance=float(candidate.importance),
                 source_document_id=source_document_id,
-                valid_until=default_memory_expiry(candidate["memory_type"], retention_days),
-                metadata=dict(candidate.get("metadata", {})),
+                valid_until=default_memory_expiry(candidate.memory_type, retention_days),
+                metadata=dict(candidate.metadata),
             )
             self.memory_repo.save(memory)
             created.append(memory)
