@@ -1,4 +1,14 @@
-# Optional dependencies for E2E HTTP smoke tests
 # Core runtime (domain/repositories/services) requires NO pip installs — stdlib only.
+# Optional dependencies for E2E HTTP smoke tests
 fastapi>=0.100.0
 uvicorn>=0.20.0
+
+# WeChat data extraction dependencies
+# 注意：pycryptodomex, pywin32, psutil 是必需的
+pycryptodomex>=3.15.0
+pywin32>=305
+psutil>=5.9.0
+
+# SQLCipher support (for database decryption)
+# 需要编译的 SQLCipher 库或使用 pysqlcipher3
+# pysqlcipher3>=1.2.0  # 可选，用于数据库解密
