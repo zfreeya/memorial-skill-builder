@@ -1,0 +1,4 @@
+interface:
+  display_name: "Memorial Skill Builder"
+  short_description: "Build a production-grade memorial skill for a deceased person — grounded in real source material, with consent, audit, and deletion built in from day one."
+  default_prompt: "Use $memorial-skill-builder to create or upgrade a memorial skill. The skill will enforce a three-layer prompt system, four-layer memory architecture, full ConsentRecord pipeline, and auditable deletion — aligned to the repo coding-spec."
