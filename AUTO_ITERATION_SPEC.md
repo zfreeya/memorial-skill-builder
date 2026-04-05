@@ -19,6 +19,8 @@
 - 运行 `python scripts/run_unit_tests.py` 检查测试
 - 运行 `git status` 查看未提交更改
 
+**重要**：memorial skill 实例必须生成到 `data/skills/{skill_name}/` 目录，而不是用户的 workspace。
+
 ### Step 2: 选择改进项
 
 按优先级选择一个改进项：
