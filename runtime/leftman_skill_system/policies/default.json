@@ -1,0 +1,11 @@
+{
+  "name": "default",
+  "description": "Baseline policy pack for regular target objects.",
+  "requires_explicit_consent": false,
+  "allow_export": true,
+  "allow_deletion": true,
+  "blocked_topics": [
+    "credential theft",
+    "policy bypass"
+  ]
+}

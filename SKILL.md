@@ -69,8 +69,35 @@ Before closing any task, verify:
 - [ ] All paths in `references/repo-map.md` resolve to existing files
 - [ ] Output follows rules in `references/output-rules.md`
 - [ ] Hard boundaries in `references/hard-boundaries.md` are not violated
-- [ ] If code changed: run targeted repo tests
+- [ ] If code changed: run `python scripts/run_unit_tests.py` from skill root
+- [ ] If available: run `python scripts/run_e2e_smoke.py` from skill root (requires fastapi/uvicorn)
+- [ ] Run `python scripts/validate_skill_package.py` from skill root
 - [ ] State remaining gaps between scaffold and production — do not hide them
+
+## Self-Contained Runtime
+
+This skill package includes a complete Python runtime under `runtime/`:
+
+```
+runtime/
+  leftman_skill_system/
+    domain/          — enums + data models (stdlib only)
+    repositories/    — in-memory repos with JSON persistence (stdlib only)
+    services/        — business logic (stdlib only)
+    api/             — FastAPI HTTP layer (requires fastapi+uvicorn)
+    prompts/         — prompt templates (system, persona, memory)
+    policies/        — policy packs (default, high_risk_deceased)
+```
+
+**Scripts for validation:**
+
+| Script | Purpose | Dependencies |
+|--------|---------|-------------|
+| `scripts/validate_skill_package.py` | Structural check (files exist, no junk) | None (stdlib) |
+| `scripts/run_unit_tests.py` | Domain/repo/service unit tests | None (stdlib) |
+| `scripts/run_e2e_smoke.py` | Full lifecycle HTTP smoke test | fastapi, uvicorn |
+
+All scripts auto-detect the skill root directory. Run from anywhere inside the skill package.
 
 ## References
 

@@ -1,32 +1,8 @@
-# Python
+data/
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-*.pyc.*
-*.egg-info/
-dist/
-build/
-.eggs/
-*.egg
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Runtime data (private, never commit)
-exes/
-data/private/
-*.key
-*.pem
+*.2744757*
+*.1704967821*
+*.1878082148*
+*.1400561*
+*.2744757959*
