@@ -43,17 +43,7 @@ def main():
         check("Body has Step 0", "### 0." in content)
         check("Body has Step 5", "### 5." in content)
 
-    # --- 2. agents/openai.yaml ---
-    print("\n=== agents/ ===")
-    yaml_file = SKILL_ROOT / "agents" / "openai.yaml"
-    check("agents/openai.yaml exists", yaml_file.is_file())
-    if yaml_file.is_file():
-        yaml_content = yaml_file.read_text(encoding="utf-8")
-        check("Has display_name", "display_name:" in yaml_content)
-        check("Has short_description", "short_description:" in yaml_content)
-        check("Has default_prompt", "default_prompt:" in yaml_content)
-
-    # --- 3. references/ ---
+    # --- 2. references/ ---
     print("\n=== references/ ===")
     required_refs = [
         "spec-checklist.md",
@@ -67,7 +57,6 @@ def main():
         check(f"references/{ref} exists", (SKILL_ROOT / "references" / ref).is_file())
 
     # --- 4. runtime/ (self-contained Python) ---
-    print("\n=== runtime/ ===")
     runtime_root = SKILL_ROOT / "runtime" / "leftman_skill_system"
     check("runtime/leftman_skill_system/ exists", runtime_root.is_dir())
 
@@ -95,6 +84,12 @@ def main():
         "api/__init__.py",
         "api/app.py",
         "api/dependencies.py",
+        "api/routes/__init__.py",
+        "api/routes/skills.py",
+        "api/routes/memory.py",
+        "api/routes/conversations.py",
+        "api/routes/sources.py",
+        "api/routes/governance.py",
     ]
     for py_file in required_py_files:
         check(f"runtime/leftman_skill_system/{py_file}", (runtime_root / py_file).is_file())
@@ -124,7 +119,7 @@ def main():
 
     # --- 7. No empty directories ---
     print("\n=== Clean directory check ===")
-    for d in ["scripts", "tests", "references", "agents", "runtime"]:
+    for d in ["scripts", "tests", "references", "runtime"]:
         dir_path = SKILL_ROOT / d
         if dir_path.is_dir():
             file_count = len(list(dir_path.rglob("*")))

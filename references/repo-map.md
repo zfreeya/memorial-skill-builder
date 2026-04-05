@@ -7,7 +7,6 @@ Use this file to decide where to make changes.
 ```
 memorial-skill-builder/
   SKILL.md                              — operational instructions
-  agents/openai.yaml                    — UI metadata and default prompt
   references/                           — rule details, checklists, maps
   runtime/leftman_skill_system/         — self-contained Python runtime
   scripts/                              — validation and test scripts
