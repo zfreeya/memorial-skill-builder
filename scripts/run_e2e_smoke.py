@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -24,6 +25,22 @@ SKILL_ROOT = Path(__file__).resolve().parent.parent
 RUNTIME_DIR = SKILL_ROOT / "runtime"
 PYTHON = sys.executable
 BASE_URL = "http://127.0.0.1:8765"
+
+
+def cleanup_runtime_bytecode() -> int:
+    removed_count = 0
+
+    for pattern in ("*.pyc", "*.pyo"):
+        for artifact in RUNTIME_DIR.rglob(pattern):
+            artifact.unlink()
+            removed_count += 1
+
+    for cache_dir in sorted(RUNTIME_DIR.rglob("__pycache__"), reverse=True):
+        shutil.rmtree(cache_dir)
+        removed_count += 1
+
+    return removed_count
+
 
 
 def call(method: str, path: str, payload: dict | None = None):
@@ -56,7 +73,9 @@ def start_server():
     env = os.environ.copy()
     runtime_path = str(RUNTIME_DIR)
     env["PYTHONPATH"] = runtime_path if not env.get("PYTHONPATH") else runtime_path + os.pathsep + env["PYTHONPATH"]
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
     return subprocess.Popen(
+
         [PYTHON, "-m", "uvicorn", "leftman_skill_system.api.app:app", "--host", "127.0.0.1", "--port", "8765"],
         cwd=str(SKILL_ROOT),
         env=env,
@@ -81,7 +100,12 @@ def main():
     print(f"Skill root:  {SKILL_ROOT}")
     print(f"Runtime dir: {RUNTIME_DIR}\n")
 
+    removed_before = cleanup_runtime_bytecode()
+    if removed_before:
+        print(f"Removed {removed_before} runtime bytecode artifact(s) before E2E")
+
     # Check fastapi is available
+
     try:
         import fastapi  # noqa: F401
         import uvicorn  # noqa: F401
@@ -221,7 +245,12 @@ def main():
     finally:
         stop_server(server)
 
+    removed_after = cleanup_runtime_bytecode()
+    if removed_after:
+        print(f"Removed {removed_after} runtime bytecode artifact(s) after E2E")
+
     print("\nALL E2E TESTS PASSED")
+
 
 
 if __name__ == "__main__":
