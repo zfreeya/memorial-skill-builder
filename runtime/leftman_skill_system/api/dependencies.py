@@ -95,6 +95,7 @@ class Container:
             self.audits,
             self.audit_service,
             self.auth_service,
+            self.consents,
         )
         self.admin_service = AdminService(self.audits, self.safety, self.delete_jobs)
 

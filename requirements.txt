@@ -1,0 +1,4 @@
+# Optional dependencies for E2E HTTP smoke tests
+# Core runtime (domain/repositories/services) requires NO pip installs — stdlib only.
+fastapi>=0.100.0
+uvicorn>=0.20.0

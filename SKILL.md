@@ -11,11 +11,13 @@ Build production-grade memorial skills grounded in real source material — with
 
 Execute these steps in order. Do not skip.
 
-### 0. Locate Project Root
+### 0. Understand Context
 
-Before anything else, identify the project root directory. This skill package lives under `~/.agents/skills/` but the codebase it operates on is a separate project repo. All `/docs/` and `src/` paths in this skill refer to the project root, not the skill package directory.
+This skill package is **self-contained** — the Python runtime lives under `runtime/` and requires no external project repo to function. All validation scripts under `scripts/` operate within the skill package itself.
 
-**How to find it:** Look for `docs/PRD.md`, `src/leftman_skill_system/`, `coding-spec.md`, or `pyproject.toml` in the current workspace. If the workspace is not the memorial project repo, ask the user for the correct path.
+However, there is a **companion project repo** at `d:\OneProject\Left-man\` that contains upstream design docs under `/docs/` and the source-of-truth codebase under `src/`. The `runtime/` directory in this skill package is a copy synced from that repo.
+
+**When modifying runtime code:** update the project repo first (`src/`), then re-sync to this skill package's `runtime/`. See `references/repo-map.md` for the sync workflow.
 
 ### 1. Read Current State
 
@@ -50,8 +52,8 @@ Never let docs and code drift apart:
 
 | Change type | Files to sync |
 |------------|--------------|
-| Scope, policy, behavior contract | `/docs/` corresponding doc — update before code |
-| Executable behavior | `src/leftman_skill_system/` corresponding module |
+| Scope, policy, behavior contract | `/docs/` in project repo — update before code |
+| Executable behavior | `src/` in project repo, then sync to `runtime/` |
 | Working method, triggers, validation | This skill package |
 
 `/docs/` must stay current: `PRD.md`, `architecture.md`, `prompt-spec.md`, `data-model.md`, `api-spec.md`, `security-compliance.md`, `testing-plan.md`, `roadmap.md`, `comparison-vs-existing.md`, `task-breakdown.md`.

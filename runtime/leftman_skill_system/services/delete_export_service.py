@@ -5,7 +5,7 @@ from leftman_skill_system.domain.models import DeleteJob, new_id, utc_now
 
 
 class DeleteExportService:
-    def __init__(self, delete_job_repo, skill_repo, memory_repo, source_repo, audit_repo, audit_service, auth_service=None):
+    def __init__(self, delete_job_repo, skill_repo, memory_repo, source_repo, audit_repo, audit_service, auth_service=None, consent_repo=None):
         self.delete_job_repo = delete_job_repo
         self.skill_repo = skill_repo
         self.memory_repo = memory_repo
@@ -13,6 +13,7 @@ class DeleteExportService:
         self.audit_repo = audit_repo
         self.audit_service = audit_service
         self.auth_service = auth_service
+        self.consent_repo = consent_repo
 
     def request_delete(self, *, skill_id: str, requested_by: str) -> DeleteJob:
         self._enforce_action(skill_id=skill_id, actor_id=requested_by, action="delete")
@@ -30,16 +31,50 @@ class DeleteExportService:
             raise ValueError("Skill not found")
         self._enforce_action(skill_id=skill.skill_id, actor_id=actor_id, action="delete")
 
+        # Hard Boundary 3: Deletion means deletion — not "mark as deleted".
+        # Purge memories, wipe source content, revoke consents, then mark skill deleted.
+
+        deleted_memory_count = 0
         for memory in self.memory_repo.list_by_skill(skill.skill_id):
             memory.status = MemoryStatus.DELETED
+            memory.revision += 1
             self.memory_repo.save(memory)
+            deleted_memory_count += 1
+
+        # Wipe source document content (actual data removal)
+        deleted_source_count = 0
+        for source in self.source_repo.list_by_skill(skill.skill_id):
+            source.content = ""
+            source.sensitivity = "deleted"
+            self.source_repo.save(source)
+            deleted_source_count += 1
+
+        # Cascade: revoke all active consents
+        revoked_consent_count = 0
+        if self.consent_repo:
+            from leftman_skill_system.domain.enums import ConsentStatus
+            for consent in self.consent_repo.list_by_skill(skill.skill_id):
+                if consent.is_active():
+                    consent.status = ConsentStatus.REVOKED
+                    self.consent_repo.save(consent)
+                    revoked_consent_count += 1
 
         skill.status = SkillStatus.DELETED
         self.skill_repo.save(skill)
         job.status = "completed"
         job.completed_at = utc_now()
         self.delete_job_repo.save(job)
-        self.audit_service.log("delete.completed", {"job_id": job.job_id}, skill_id=skill.skill_id, actor_id=actor_id)
+        self.audit_service.log(
+            "delete.completed",
+            {
+                "job_id": job.job_id,
+                "memories_deleted": deleted_memory_count,
+                "sources_purged": deleted_source_count,
+                "consents_revoked": revoked_consent_count,
+            },
+            skill_id=skill.skill_id,
+            actor_id=actor_id,
+        )
         return job
 
     def export_skill(self, *, skill_id: str, actor_id: str) -> dict:

@@ -9,12 +9,6 @@ class AuthService:
         self.consent_repo = consent_repo
         self.policy_service = policy_service
 
-    def authorize_skill_access(self, *, skill_id: str, user_id: str) -> bool:
-        skill = self.skill_repo.get(skill_id)
-        if not skill:
-            return False
-        return skill.owner_user_id == user_id
-
     def has_active_consent(self, *, skill_id: str, actor_id: str | None, action: str) -> bool:
         for item in self.consent_repo.list_by_skill(skill_id):
             if not item.is_active():

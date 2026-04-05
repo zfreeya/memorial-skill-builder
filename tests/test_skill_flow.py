@@ -35,7 +35,7 @@ from leftman_skill_system.services.auth_service import AuthService
 from leftman_skill_system.services.runtime_conversation_service import ConversationService
 from leftman_skill_system.services.delete_export_service import DeleteExportService
 from leftman_skill_system.services.memory_service import MemoryService
-from leftman_skill_system.services.moderation_service import ModerationService
+from leftman_skill_system.services.content_guard_service import ContentGuardService
 from leftman_skill_system.services.policy_service import PolicyService
 from leftman_skill_system.services.prompt_service import PromptService
 from leftman_skill_system.services.retrieval_service import RetrievalService
@@ -107,7 +107,7 @@ class SkillFlowTest(unittest.TestCase):
         self.memory_service = MemoryService(self.memories, self.audit_service)
         self.source_service = SourceService(self.sources, self.audit_service)
         self.retrieval_service = RetrievalService(self.memory_service)
-        self.moderation_service = ModerationService()
+        self.moderation_service = ContentGuardService()
         self.prompt_service = PromptService(self.prompts, self.memory_service, self.policy_service, BASE_DIR / "prompts")
         self.skill_service = SkillService(
             self.skills, self.personas, self.prompts, self.skill_versions, self.audit_service
@@ -124,7 +124,8 @@ class SkillFlowTest(unittest.TestCase):
             self.audit_service,
         )
         self.delete_export_service = DeleteExportService(
-            self.delete_jobs, self.skills, self.memories, self.sources, self.audits, self.audit_service
+            self.delete_jobs, self.skills, self.memories, self.sources, self.audits, self.audit_service,
+            consent_repo=self.consents,
         )
 
     def test_skill_creation_and_delete(self):

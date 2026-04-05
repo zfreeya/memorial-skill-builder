@@ -43,7 +43,7 @@ class SkillService:
         for layer, version in (("system", "1.0.0"), ("persona", "1.0.0"), ("memory", "1.0.0")):
             self.prompt_repo.save(
                 PromptVersion(
-                    prompt_version_id=f"{layer}:v1",
+                    prompt_version_id=f"{skill.skill_id}:{layer}:v1",
                     layer=layer,
                     semantic_version=version,
                     content="",
